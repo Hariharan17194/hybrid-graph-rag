@@ -1,0 +1,21 @@
+# Environment / secrets
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Runtime data / generated indexes
+backend/storage/
+backend/uploads/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

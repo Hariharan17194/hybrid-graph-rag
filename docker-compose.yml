@@ -1,0 +1,48 @@
+services:
+  backend:
+    build: ./backend
+    container_name: hybrid-rag-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/storage:/app/storage   # ChromaDB + graph persist here
+      - ./backend/uploads:/app/uploads   # uploaded PDFs
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    # --- Uncomment if you're deploying this behind the Traefik reverse
+    # proxy you already have running on your VPS, instead of exposing
+    # the "ports" above directly. Adjust the Host() rule to your domain.
+    # networks:
+    #   - traefik
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.hybridrag-api.rule=Host(`api.yourdomain.com`)"
+    #   - "traefik.http.services.hybridrag-api.loadbalancer.server.port=8000"
+
+  frontend:
+    build: ./frontend
+    container_name: hybrid-rag-frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    # networks:
+    #   - traefik
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.hybridrag-ui.rule=Host(`hybridrag.yourdomain.com`)"
+    #   - "traefik.http.services.hybridrag-ui.loadbalancer.server.port=8501"
+
+# networks:
+#   traefik:
+#     external: true   # the network your existing Traefik container uses
