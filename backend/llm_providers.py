@@ -21,6 +21,7 @@ class LLMError(Exception):
 # Chat completion
 # --------------------------------------------------------------------------
 
+
 def chat_completion(prompt: str, system: str = "", timeout: int | None = None) -> str:
     """
     Send a single-turn prompt to the configured LLM provider and return
@@ -44,7 +45,7 @@ def chat_completion(prompt: str, system: str = "", timeout: int | None = None) -
             )
     except LLMError:
         raise
-    except Exception as exc:  # noqa: BLE001 - we deliberately funnel everything through LLMError
+    except Exception as exc:
         raise LLMError(f"{provider} call failed: {exc}") from exc
 
 
@@ -60,9 +61,7 @@ def _ollama_chat(prompt: str, system: str, timeout: int) -> str:
         "stream": False,
     }
     try:
-        resp = httpx.post(
-            f"{settings.ollama_base_url}/api/chat", json=payload, timeout=timeout
-        )
+        resp = httpx.post(f"{settings.ollama_base_url}/api/chat", json=payload, timeout=timeout)
         resp.raise_for_status()
     except httpx.ConnectError as exc:
         raise LLMError(
@@ -83,9 +82,7 @@ def _openai_chat(prompt: str, system: str, timeout: int) -> str:
         {"role": "user", "content": prompt}
     ]
     try:
-        resp = client.chat.completions.create(
-            model=settings.openai_model, messages=messages
-        )
+        resp = client.chat.completions.create(model=settings.openai_model, messages=messages)
     except APITimeoutError as exc:
         raise TimeoutError("OpenAI request timed out") from exc
     return resp.choices[0].message.content
@@ -113,6 +110,7 @@ def _anthropic_chat(prompt: str, system: str, timeout: int) -> str:
 # Embeddings
 # --------------------------------------------------------------------------
 
+
 @functools.lru_cache(maxsize=1)
 def _local_embedder():
     """Lazily load the local sentence-transformers model (once per process)."""
@@ -136,9 +134,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
         from openai import OpenAI
 
         client = OpenAI(api_key=settings.openai_api_key)
-        resp = client.embeddings.create(
-            model=settings.openai_embedding_model, input=texts
-        )
+        resp = client.embeddings.create(model=settings.openai_embedding_model, input=texts)
         return [item.embedding for item in resp.data]
 
     raise LLMError(

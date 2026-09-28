@@ -65,9 +65,7 @@ def check_input(question: str) -> GuardrailResult:
         )
 
     if _SENSITIVE_RE.search(question):
-        return GuardrailResult(
-            False, "This question is outside what this assistant can help with."
-        )
+        return GuardrailResult(False, "This question is outside what this assistant can help with.")
 
     return GuardrailResult(True)
 

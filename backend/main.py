@@ -73,10 +73,15 @@ def status():
 
 @app.post("/upload")
 async def upload_document(file: UploadFile = File(...)):
-    if file.content_type != "application/pdf" and not file.filename.lower().endswith(".pdf"):
+    # Keep only the base name so a crafted filename like "../../x.pdf" can't
+    # write outside UPLOAD_DIR.
+    safe_name = Path(file.filename or "").name
+    if not safe_name or (
+        file.content_type != "application/pdf" and not safe_name.lower().endswith(".pdf")
+    ):
         raise HTTPException(status_code=400, detail="Only PDF files are supported right now.")
 
-    dest = UPLOAD_DIR / file.filename
+    dest = UPLOAD_DIR / safe_name
     try:
         contents = await file.read()
         if not contents:
@@ -92,9 +97,9 @@ async def upload_document(file: UploadFile = File(...)):
         start = time.time()
         result = pipeline.ingest_pdf(dest)
         elapsed = round(time.time() - start, 2)
-        logger.info("Ingested %s in %ss", file.filename, elapsed)
+        logger.info("Ingested %s in %ss", safe_name, elapsed)
         return {
-            "filename": file.filename,
+            "filename": safe_name,
             "chunks": result["chunks"],
             "entities": result["entities"],
             "relationships": result["relationships"],

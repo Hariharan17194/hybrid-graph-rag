@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directories: ["/backend", "/frontend"]
+    schedule: { interval: weekly }
+    commit-message: { prefix: "build(deps)" }
+    groups:
+      python-deps: { patterns: ["*"] }
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule: { interval: monthly }
+    commit-message: { prefix: "ci(deps)" }
+  - package-ecosystem: docker
+    directories: ["/backend", "/frontend"]
+    schedule: { interval: monthly }
+    commit-message: { prefix: "build(docker)" }

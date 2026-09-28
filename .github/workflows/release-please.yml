@@ -1,0 +1,19 @@
+# Reads Conventional Commits on main, opens a "release PR" with a CHANGELOG + version bump.
+# Merge that PR → a GitHub Release and tag (v1.2.0) are created automatically.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple

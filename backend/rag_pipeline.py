@@ -225,7 +225,7 @@ class HybridRAGPipeline:
         )
 
         total_entities, total_rels = 0, 0
-        for chunk, chunk_id in zip(chunks, chunk_ids):
+        for chunk, chunk_id in zip(chunks, chunk_ids, strict=True):
             e, r = self._extract_graph_from_chunk(chunk, chunk_id)
             total_entities += e
             total_rels += r
@@ -249,6 +249,7 @@ class HybridRAGPipeline:
             results["metadatas"][0],
             results["ids"][0],
             results["distances"][0],
+            strict=True,
         ):
             hits.append(
                 {
@@ -281,7 +282,9 @@ class HybridRAGPipeline:
 
         fetched = self.collection.get(ids=list(related_chunk_ids)[: top_k * 2])
         hits = []
-        for doc, meta, chunk_id in zip(fetched["documents"], fetched["metadatas"], fetched["ids"]):
+        for doc, meta, chunk_id in zip(
+            fetched["documents"], fetched["metadatas"], fetched["ids"], strict=True
+        ):
             hits.append(
                 {
                     "chunk_id": chunk_id,

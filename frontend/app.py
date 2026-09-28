@@ -21,6 +21,7 @@ st.set_page_config(page_title="Hybrid RAG", page_icon="🧠", layout="wide")
 # Helpers
 # --------------------------------------------------------------------------
 
+
 def backend_get(path: str):
     try:
         resp = requests.get(f"{BACKEND_URL}{path}", timeout=10)
@@ -64,7 +65,9 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Choose a PDF", type=["pdf"])
 
     if uploaded_file is not None and st.button("Ingest document", use_container_width=True):
-        with st.spinner(f"Processing '{uploaded_file.name}' (chunking, embedding, graph extraction)..."):
+        with st.spinner(
+            f"Processing '{uploaded_file.name}' (chunking, embedding, graph extraction)..."
+        ):
             files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "application/pdf")}
             data, error = backend_post("/upload", files=files)
 

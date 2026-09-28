@@ -1,10 +1,6 @@
 """
 Centralized settings for the backend, loaded from environment variables
 (populated from a .env file via python-dotenv in main.py).
-
-This isn't one of the files you explicitly listed, but pulling all the
-provider/model switches into one place makes it much easier to change
-your LLM or embedding provider later without hunting through the code.
 """
 
 import os
