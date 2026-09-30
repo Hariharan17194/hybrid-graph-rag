@@ -43,6 +43,12 @@ It runs **fully locally by default** (Ollama + sentence-transformers, no API key
 - **Persistent knowledge base** — vectors, graph and manifest survive container restarts.
 - **Deploy-ready** — Docker Compose with health checks and optional Traefik labels for a VPS.
 
+## ✦ Skills demonstrated
+
+**RAG engineering** · embeddings · vector search · knowledge graphs · hybrid retrieval · source-grounded generation · prompt-injection guardrails · FastAPI · Streamlit · Docker · CI/CD
+
+**Course progression:** extends the standard RAG pipeline into the Week 3 knowledge-graph assignment by combining vector retrieval with entity/relation traversal, while also applying Week 2 production concerns such as guardrails and provider abstraction.
+
 ## ✦ Architecture
 
 ```mermaid
